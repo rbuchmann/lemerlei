@@ -27,7 +27,7 @@
                     :description "Some code-maat analysis apis"}]}}}
    (GET "/health" []
         :return {:status s/Str}
-        :summary "adds two numbers together"
+        :summary "Always ok, because why wouldn't it!"
         (ok {:status "OK"}))
 
    (GET "/authors/:user/:repository" []
