@@ -1,5 +1,6 @@
 (ns lemerlei.core
   (:require [lemerlei.handlers       :as handlers]
+            [lemerlei.authentication :as auth]
             [lemerlei.github         :refer [github]]
             [compojure.api.sweet     :refer :all]
             [ring.util.http-response :refer :all]
@@ -42,6 +43,15 @@
         :path-params [user       :- String
                       repository :- String]
         :summary "Calculates the coupling degree per file"
-        (ok (handlers/coupling source user repository)))))
+        (ok (handlers/coupling source user repository)))
+   (GET "/secret" []
+        :return {:secret s/Str}
+        :summary "This route needs authentication"
+        (auth/with-authorizing-only #{:lemerlei.authentication/admin}
+          {:secret "Sssshhhhhh....."}))))
 
 (def app (make-app github))
+
+;; Authentication
+
+(def secured-app (auth/wrap app))

@@ -13,11 +13,18 @@
 
 (def opts {:auth (str username ":" password)})
 
+;; One of Clojures mechanisms for polymorphism.  Protocols are like
+;; interfaces, only much more useful, since you can implement them for
+;; types you don't control. In this regard, they are more similar to
+;; Haskells typeclasses
+
 (defprotocol CommitSource
   (get-commits [this user repo])
   (get-commit [this user repo sha]))
 
-;; simple connector for synchronous github api requests
+;; simple connector for synchronous github api requests. A record is
+;; like a simple, immutable value class in Java.  This one doesn't
+;; have any fields, it only implements the CommitSource protocol.
 
 (defrecord GithubConnector []
   CommitSource
@@ -49,6 +56,7 @@
   ;; (See http://clojure.org/reference/transducers)
   (let [commit-chan (chan 1 (map :sha))
         out-chan (chan 500)] ; buffer generously for parallel processing
+
     ;; Start a go-routine to fill the commit-channel
     (go
       (let [commit-list (get-commits source user repo)]
@@ -67,5 +75,3 @@
                               (mapcat summarize-commit))
                              commit-chan)
     out-chan))
-
-(def changes (<!! (async/into [] (download-changelist github "freiheit-com" "test-mate"))))

@@ -8,12 +8,14 @@
                  [org.clojure/data.json      "0.2.6"]
                  [com.cemerick/friend        "0.2.3"]
                  [clj-jwt                    "0.1.1"]
+                 [sourcewerk/friend-jwt      "0.1.0-SNAPSHOT"]
                  [com.stuartsierra/component "0.3.1"]
                  [environ                    "1.0.3"]
                  [code-maat                  "1.0-SNAPSHOT"]
                  [tentacles                  "0.5.1"]
+                 [org.clojure/test.check     "0.9.0"]
                  [org.clojure/core.async     "0.2.385"]]
-  :ring {:handler lemerlei.core/app}
+  :ring {:handler lemerlei.core/secured-app}
   :uberjar-name "server.jar"
   :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                                   [cheshire "5.5.0"]
