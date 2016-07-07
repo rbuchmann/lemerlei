@@ -1,7 +1,7 @@
 (ns lemerlei.authentication
   (:require [cemerick.friend.credentials :as creds]
             [cemerick.friend.workflows   :as workflows]
-            [ring.util.http-response     :refer :all]
+            [ring.util.http-response     :as http]
             [clj-time.core               :refer [minutes]]
             [cemerick.friend             :as friend]
             [sourcewerk.friend-jwt.core  :as friend-jwt]))
@@ -30,8 +30,7 @@
 (defn wrap [app]
   (friend/authenticate
    app
-   {:allow-anon? true
-    :unauthorized-handler (fn [& _] (unauthorized))
+   {:allow-anon? true ; Unauthenticated access is fine for the unprotected resources
     :unauthenticated-handler friend-jwt/workflow-deny
     :login-uri "/login"
     :workflows [(friend-jwt/workflow
@@ -51,13 +50,14 @@
   ;; form foo# generate new symbols to avoid name capture
   ;; http://clojure.org/reference/macros
   `(try (friend/authorize ~roles
-                          (ok ~@body))
+                          (http/ok
+                           (do ~@body)))
         (catch clojure.lang.ExceptionInfo e#
           (let [data# (:object (.getData e#))]
             (if (= :unauthorized (:cemerick.friend/type data#))
-              (unauthorized
+              (http/unauthorized
                {:error "Unauthorized!"
                 :roles-required (-> data#
                                     ::cemerick.friend/required-roles
                                     vec)})
-              (internal-server-error))))))
+              (http/internal-server-error))))))

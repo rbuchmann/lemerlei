@@ -8,6 +8,7 @@
                  [org.clojure/data.json      "0.2.6"]
                  [com.cemerick/friend        "0.2.3"]
                  [clj-jwt                    "0.1.1"]
+                 ;; This didn't update for a while, but it's just one short file. Should probably rewrite this.
                  [sourcewerk/friend-jwt      "0.1.0-SNAPSHOT"]
                  [com.stuartsierra/component "0.3.1"]
                  [environ                    "1.0.3"]
