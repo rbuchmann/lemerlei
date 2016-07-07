@@ -13,3 +13,16 @@
           body     (parse-body (:body response))]
       (is (= (:status response) 200))
       (is (= (:status body) "OK")))))
+
+
+(deftest swagger-test
+  (testing "/swagger.json yields swagger schema definition"
+    (let [response (app (-> (mock/request :get "/swagger.json")))
+          body (parse-body (:body response))]
+      ;; In Clojure, sets are functions, they return their argument if
+      ;; they contain it. Only false and nil are falsey, so this
+      ;; checks if the parsed body contains a :swagger key
+      (is (-> body
+              keys
+              set
+              :swagger)))))
